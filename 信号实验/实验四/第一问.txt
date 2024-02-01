@@ -1,0 +1,23 @@
+clear;
+clc;
+
+%1.
+[n,wn]=buttord(300,500,3,20,'s');%计算滤波器阶数
+[b a]=butter(n,wn,'low','s');
+g=tf(b,a);
+figure;
+subplot(2,1,1);
+impulse(g);         %画脉冲响应
+xlim([0 0.1]);
+title('1. 滤波器冲激响应曲线');
+ylabel('冲激响应强度');
+xlabel('t/s');
+grid on;
+subplot(2,1,2);
+[h,w]=freqs(b,a,1000);
+plot(w,20*log10(abs(h)));       %画滤波器幅频特性
+axis([0 600 -30 8]);
+title('1. 滤波器幅频特性');
+ylabel('幅值/dB');
+xlabel('模拟频率/(rad/s)');
+grid on;

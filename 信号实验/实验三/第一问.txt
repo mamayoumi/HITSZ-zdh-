@@ -1,0 +1,146 @@
+clear;
+clc;
+%1.三角波
+figure (1)%创建画布
+figure (2)%创建画布
+fs=1000;
+x=zeros(1,9);
+for i=0:8       %获得三角波序列
+    if i<=4
+        x(i+1)=i+1;
+    end
+    if i>=5
+        x(i+1)=9-i;
+    end
+end
+n=0:1:8;    %画三角波序列
+figure(1);
+subplot(3,1,1);
+stem(n,x);
+title('1.(1) 三角波序列');
+xlabel('n');
+ylabel('x1[n]');
+figure(2);
+subplot(2,3,1);
+stem(n,x);
+title('1.(1) 三角波序列');
+xlabel('n');
+ylabel('x1[n]');
+%频谱用模拟频率做横轴
+N=10000;
+xk=fft(x,N);    %计算10000点fft
+o=0:fs/N:fs-fs/N;
+figure(1);
+subplot(3,1,2);
+plot(o,abs(xk));        %画10000点fft幅度谱
+xlabel('f/Hz (模拟频率)');
+ylabel('10000点FFT频谱幅度');
+title('1.(1) N=10000三角波幅度谱');
+figure(1);
+subplot(3,1,3);     %画10000点fft相位谱
+plot(o,angle(xk));
+xlabel('f/Hz (模拟频率)');
+ylabel('\theta/rad');
+title('1.(1) N=10000三角波相位谱');
+
+%频谱用数字角频率做横轴
+o=0:2*pi/N:2*pi-2*pi/N;
+figure(2);
+subplot(2,3,2);         %画10000点fft幅度谱(连续)
+plot(o,abs(xk));
+xlabel('\Omega/rad (数字角频率)');
+ylabel('10000点FFT频谱幅度');
+xlim([0 2*pi]);
+title('1.(1) N=10000三角波幅度谱(连续)');
+subplot(2,3,3);         %画10000点fft幅度谱(离散)
+stem(o,abs(xk));
+xlabel('\Omega/rad (数字角频率)');
+ylabel('10000点FFT幅度频谱');
+xlim([0 2*pi]);
+title('1.(1) N=10000三角波幅度谱(离散)');
+figure(2);
+subplot(2,3,5);          %画10000点fft相位谱(连续)
+plot(o,angle(xk));
+xlabel('\Omega/rad (数字角频率)');
+ylabel('\theta/rad');
+xlim([0 2*pi]);
+title('1.N=10000三角波相位谱(连续)');
+figure(2);
+subplot(2,3,6);          %画10000点fft相位谱(离散)
+stem(o,angle(xk));
+xlabel('\Omega/rad (数字角频率)');
+ylabel('\theta/rad');
+xlim([0 2*pi]);
+title('1.N=10000三角波相位谱(离散)');
+
+%1.方波
+figure(3);%创建画布
+figure(4);%创建画布
+
+x=ones(1,7);
+x=[x 0 0];  %创建方波序列
+n=0:1:8;
+figure(3);  %画方波序列
+subplot(3,1,1);
+stem(n,x);
+title('1.(2)方波序列');
+ylim([0,1.5]);
+xlabel('n');
+ylabel('x2[n]');
+
+figure(4);  %画方波序列
+subplot(2,3,1);
+stem(n,x);
+title('1.(2)方波序列');
+ylim([0,1.5]);
+xlabel('n');
+ylabel('x2[n]');
+
+N=10000;
+xk=fft(x,N);            %计算10000点FFT
+%横轴用模拟频率
+o=0:fs/N:fs-fs/N;
+figure(3);
+subplot(3,1,2);
+plot(o,abs(xk));        %画FFT幅度谱
+xlabel('f/Hz (模拟频率)');
+ylabel('10000点FFT频谱幅度');
+title('1.(2) 方波幅度谱');
+figure(3);
+subplot(3,1,3);             %画FFT相位谱
+plot(o,angle(xk));
+xlabel('f/Hz (模拟频率)');
+ylabel('\theta/rad');
+title('1.(2) 方波相位谱');
+
+
+%横轴用数字频率
+o=0:2*pi/N:2*pi-2*pi/N;
+figure(4);
+subplot(2,3,2);
+plot(o,abs(xk));        %画FFT幅度谱 (连续)
+xlabel('\Omega/rad (数字角频率)');
+ylabel('10000点FFT频谱幅度');
+title('1.(2) 方波幅度谱(连续)');
+xlim([0 2*pi]);
+figure(4);
+subplot(2,3,5);             %画FFT相位谱(连续)
+plot(o,angle(xk));
+xlabel('\Omega/rad (模拟频率)');
+ylabel('\theta/rad');
+title('1.(2) 方波相位谱(连续)');
+xlim([0 2*pi]);
+figure(4);
+subplot(2,3,3);
+stem(o,abs(xk));        %画FFT幅度谱 (离散)
+xlabel('\Omega/rad (数字角频率)');
+ylabel('10000点FFT频谱幅度');
+title('1.(2) 方波幅度谱(离散)');
+xlim([0 2*pi]);
+figure(4);
+subplot(2,3,6);             %画FFT相位谱(离散)
+stem(o,angle(xk));
+xlabel('\Omega/rad (模拟频率)');
+ylabel('\theta/rad');
+title('1.(2) 方波相位谱(离散)');
+xlim([0 2*pi]);

@@ -1,0 +1,194 @@
+clear;
+clc;
+%3.(1)
+f1=5;
+f2=15;
+f3=40;
+x1=zeros(1,128);
+x2=zeros(1,128);
+x3=zeros(1,128);
+f_1=5;
+f_2=9;
+for i=0:1:127       %不同频率采样
+    x1(i+1)=sin(2*pi*f_1*i/f1)+sin(2*pi*f_2*i/f1);
+     x2(i+1)=sin(2*pi*f_1*i/f2)+sin(2*pi*f_2*i/f2);
+      x3(i+1)=sin(2*pi*f_1*i/f3)+sin(2*pi*f_2*i/f3);
+end
+
+x1_k=fft(x1,128);
+x2_k=fft(x2,128);
+x3_k=fft(x3,128);   %计算128点FFT
+
+figure;     %创建画布
+%画时域采样序列
+subplot(3,3,1);  %画x1(n)
+N=0:1:127;
+stem(N,x1);
+title('3.(1) f1=5Hz128点采样序列');
+xlabel('n');
+ylabel('x1(n)')
+
+subplot(3,3,4);      %画x2(n)
+stem(N,x2);
+title('3.(1) f2=15Hz128点采样序列');
+xlabel('n');
+ylabel('x2(n)')
+
+
+subplot(3,3,7);      %画x3(n)
+stem(N,x3);
+title('3.(1) f3=40Hz128点采样序列');
+xlabel('n');
+ylabel('x3(n)')
+%画FFT频谱 (连续)
+o=0:2*pi/128:2*pi-2*pi/128;     %画x1(n)的FFT幅度谱
+subplot(3,3,2);
+plot(o,abs(x1_k));
+xlabel('\Omega/rad');
+ylabel('|X1(\Omega)|');
+xlim([0 2*pi]);
+title('3.(1) f1=5Hz128点FFT幅度谱');
+
+subplot(3,3,5);          %画x2(n)的FFT幅度谱
+plot(o,abs(x2_k));
+xlabel('\Omega/rad');
+ylabel('|X2(\Omega)|');
+xlim([0 2*pi]);
+title('3.(1) f2=15Hz128点FFT幅度谱');
+
+subplot(3,3,8);          %画x3(n)的FFT幅度谱
+plot(o,abs(x3_k));
+xlabel('\Omega/rad');
+ylabel('|X3(\Omega)|');
+xlim([0 2*pi]);
+title('3.(1) f3=40Hz128点FFT幅度谱');
+
+%画FFT频谱 (离散)
+subplot(3,3,3);          %画x1(n)的FFT幅度谱
+stem(o,abs(x1_k));
+xlabel('\Omega/rad');
+ylabel('|X1(\Omega)|');
+xlim([0 2*pi]);
+title('3.(1) f1=5Hz128点FFT幅度谱序列');
+
+subplot(3,3,6);          %画x2(n)的FFT幅度谱
+stem(o,abs(x2_k));
+xlabel('\Omega/rad');
+ylabel('|X2(\Omega)|');
+xlim([0 2*pi]);
+title('3.(1) f2=15Hz128点FFT幅度谱序列');
+
+subplot(3,3,9);          %画x3(n)的FFT幅度谱
+stem(o,abs(x3_k));
+xlabel('\Omega/rad');
+ylabel('|X3(\Omega)|');
+xlim([0 2*pi]);
+title('3.(1) f3=40Hz128点FFT幅度谱序列');
+
+%3.(2)
+figure;%创建画布
+f=60;
+x=zeros(1,64);
+for i=0:1:63            %采样
+    x(i+1)=sin(2*pi*f_1*i/f)+sin(2*pi*f_2*i/f);
+end
+N=0:1:63;
+subplot(2,3,1);
+stem(N,x);
+xlabel('n');
+ylabel('x1(n)');
+title('3.(2) f=60Hz 64点采样序列');
+x_=zeros(1,64);
+y=[x x_];           %补零  
+N=0:1:127;
+subplot(2,3,4);
+stem(N,y);
+title('3.(2) f=60Hz 64点采样后补零64点的128点序列');
+xlabel('n');
+ylabel('x2(n)');
+%计算FFT
+xk=fft(x,64);
+yk=fft(y,128);
+%绘制64点采样序列的fft幅度谱
+subplot(2,3,2);
+o=0:2*pi/64:2*pi-2*pi/64;
+plot(o,abs(xk));
+xlabel('\Omega/rad');
+ylabel('|X1(\Omega)|');
+xlim([0 2*pi]);
+title('3.(2) f=60Hz 64点采样序列的FFT幅度谱');
+
+subplot(2,3,3);
+o=0:2*pi/64:2*pi-2*pi/64;
+stem(o,abs(xk));
+xlabel('\Omega/rad');
+ylabel('|X1(\Omega)|');
+xlim([0 2*pi]);
+title('3.(2) f=60Hz 64点采样序列的FFT幅度谱序列');
+%绘制64点采样后补零64点的128点序列的fft幅度谱
+subplot(2,3,5);
+o=0:2*pi/128:2*pi-2*pi/128;
+plot(o,abs(yk));
+xlabel('\Omega/rad');
+ylabel('|X2(\Omega)|');
+xlim([0 2*pi]);
+title('3.(2) f=60Hz 64点采样后补零64点的128点序列的FFT幅度谱');
+
+subplot(2,3,6);
+o=0:2*pi/128:2*pi-2*pi/128;
+stem(o,abs(yk));
+xlabel('\Omega/rad');
+ylabel('|X2(\Omega)|');
+xlim([0 2*pi]);
+title('3.(2) f=60Hz 64点采样后补零64点的128点序列的FFT幅度谱序列');
+
+
+%3.(3)
+figure;%创建画布
+f=60;
+x=zeros(1,128);
+for i=0:1:127
+    x(i+1)=sin(2*pi*f_1*i/f)+sin(2*pi*f_2*i/f);
+end
+N=0:1:127;
+subplot(2,3,1);     %画时域采样图
+stem(N,x);
+xlabel('n');
+ylabel('x1(n)');
+title('3.(3) f=60Hz 128点采样序列');
+
+subplot(2,3,4);     %画时域采样图
+stem(N,y);
+xlabel('n');
+ylabel('x2(n)');
+title('3.(3) f=60Hz 64点采样后补零64点的128点序列');
+%画FFT频谱
+xk=fft(x,128);
+subplot(2,3,2);
+o=0:2*pi/128:2*pi-2*pi/128;
+plot(o,abs(xk));
+xlabel('\Omega/rad');
+ylabel('|X1(\Omega)|');
+xlim([0 2*pi]);
+title('3.(3) f=60Hz 128点采样序列的FFT幅度谱');
+
+subplot(2,3,3);
+stem(o,abs(xk));
+xlabel('\Omega/rad');
+ylabel('|X1(\Omega)|');
+xlim([0 2*pi]);
+title('3.(3) f=60Hz 128点采样序列的FFT幅度谱序列');
+%绘制64点采样后补零64点的128点序列的fft幅度谱
+subplot(2,3,5);
+plot(o,abs(yk));
+xlabel('\Omega/rad');
+ylabel('|X2(\Omega)|');
+xlim([0 2*pi]);
+title('3.(3) f=60Hz 64点采样后补零64点的128点序列的FFT幅度谱');
+
+subplot(2,3,6);
+stem(o,abs(yk));
+xlabel('\Omega/rad');
+ylabel('|X2(\Omega)|');
+xlim([0 2*pi]);
+title('3.(3) f=60Hz 64点采样后补零64点的128点序列的FFT幅度谱序列');

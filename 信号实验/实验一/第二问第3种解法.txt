@@ -1,0 +1,424 @@
+clear;
+clc;
+%第二问第三种解法
+%第一个采样间隔
+T=4;
+Ts1=0.01;
+c=60;
+a=zeros(1,2*c+1);
+b=zeros(1,2*c+1);   %创建频谱保存数组
+N1=4/Ts1;
+for k=-c:c      %计算dfs
+K=k+1+c;
+for n=0:N1-1
+a(K)=a(K)-square(n*Ts1*pi/2)*cos(2*pi*k*n/N1)/N1;
+b(K)=b(K)+square(n*Ts1*pi/2)*sin(2*pi*k*n/N1)/N1;
+end
+end
+r1=zeros(1,2*N1);
+im1=zeros(1,2*N1);
+for n=0:2*N1-1
+M=n+1;
+for k=-c:c %根据60次谐波复原离散序列
+K=k+1+c;
+r1(M)=r1(M)+a(K)*cos(2*pi*k*n/N1)-b(K)*sin(2*pi*k*n/N1);
+im1(M)=im1(M)+a(K)*sin(2*pi*k*n/N1)+b(K)*cos(2*pi*k*n/N1);
+end
+end
+xx1=0:Ts1:8-Ts1;
+sam1=0:1:2*N1-1;
+
+%第2个采样间隔
+T=4;
+Ts2=0.02;
+c=60;
+a=zeros(1,2*c+1);
+b=zeros(1,2*c+1);       %创建频谱保存数组
+N2=4/Ts2;
+for k=-c:c      %计算dfs
+K=k+1+c;
+for n=0:N2-1        
+a(K)=a(K)-square(n*Ts2*pi/2)*cos(2*pi*k*n/N2)/N2;
+b(K)=b(K)+square(n*Ts2*pi/2)*sin(2*pi*k*n/N2)/N2;
+end
+end
+r2=zeros(1,2*N2);
+im2=zeros(1,2*N2);
+for n=0:2*N2-1      %根据60次谐波复原离散序列
+M=n+1;
+for k=-c:c %N-1
+K=k+1+c;
+r2(M)=r2(M)+a(K)*cos(2*pi*k*n/N2)-b(K)*sin(2*pi*k*n/N2);
+im2(M)=im2(M)+a(K)*sin(2*pi*k*n/N2)+b(K)*cos(2*pi*k*n/N2);
+end
+end
+xx2=0:Ts2:8-Ts2;
+sam2=0:1:2*N2-1;
+
+%第2个采样间隔
+T=4;
+Ts3=0.025;
+c=60;
+a=zeros(1,2*c+1);
+b=zeros(1,2*c+1);       %创建频谱保存数组
+N3=4/Ts3;
+for k=-c:c      %计算dfs
+K=k+1+c;
+for n=0:N3-1
+a(K)=a(K)-square(n*Ts3*pi/2)*cos(2*pi*k*n/N3)/N3;
+b(K)=b(K)+square(n*Ts3*pi/2)*sin(2*pi*k*n/N3)/N3;
+end
+end
+r3=zeros(1,2*N3);
+im3=zeros(1,2*N3);
+for n=0:2*N3-1          %根据60次谐波复原离散序列
+M=n+1;
+for k=-c:c %N-1
+K=k+1+c;
+r3(M)=r3(M)+a(K)*cos(2*pi*k*n/N3)-b(K)*sin(2*pi*k*n/N3);
+im3(M)=im3(M)+a(K)*sin(2*pi*k*n/N3)+b(K)*cos(2*pi*k*n/N3);
+end
+end
+xx3=0:Ts3:8-Ts3;
+sam3=0:1:2*N3-1;
+
+
+
+%用plot(.)绘制
+%第一个采样间隔绘图设置
+figure;
+plot(sam1,r1,'.');
+hold on;
+plot(sam1,im1,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N1-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+
+%第2个采样间隔绘图设置
+figure;
+plot(sam2,r2,'.');
+hold on;
+plot(sam2,im2,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N2-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+
+%第3个采样间隔绘图设置
+figure;
+plot(sam3,r3,'.');
+hold on;
+plot(sam3,im3,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N3-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+
+%整体绘图设置
+figure;
+subplot(1,3,1);
+plot(sam1,r1,'.');
+hold on;
+plot(sam1,im1,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N1-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+subplot(1,3,2);
+plot(sam2,r2,'.');
+hold on;
+plot(sam2,im2,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N2-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+subplot(1,3,3);
+plot(sam3,r3,'.');
+hold on;
+plot(sam3,im3,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N3-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+
+
+%用stem()绘制
+%第一个采样间隔绘图设置
+figure;
+stem(sam1,r1);
+hold on;
+stem(sam1,im1);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N1-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+
+%第2个采样间隔绘图设置
+figure;
+stem(sam2,r2);
+hold on;
+stem(sam2,im2);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N2-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+
+%第3个采样间隔绘图设置
+figure;
+stem(sam3,r3);
+hold on;
+stem(sam3,im3);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N3-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+
+%整体绘图设置
+figure;
+subplot(1,3,1);
+stem(sam1,r1);
+hold on;
+stem(sam1,im1);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N1-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+subplot(1,3,2);
+stem(sam2,r2);
+hold on;
+stem(sam2,im2);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N2-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+subplot(1,3,3);
+stem(sam3,r3);
+hold on;
+stem(sam3,im3);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N3-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+
+%包络线
+%第一个采样间隔绘图设置
+figure;
+plot(xx1,r1);
+hold on;
+plot(xx1,im1);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波包络线'];
+title(str);
+
+%第2个采样间隔绘图设置
+figure;
+plot(xx2,r2);
+hold on;
+plot(xx2,im2);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波包络线'];
+title(str);
+
+%第3个采样间隔绘图设置
+figure;
+plot(xx3,r3);
+hold on;
+plot(xx3,im3);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波包络线'];
+title(str);
+
+%整体绘图设置
+figure;
+subplot(1,3,1);
+plot(xx1,r1);
+hold on;
+plot(xx1,im1);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波包络线'];
+title(str);
+subplot(1,3,2);
+plot(xx2,r2);
+hold on;
+plot(xx2,im2);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波包络线'];
+title(str);
+subplot(1,3,3);
+plot(xx3,r3);
+hold on;
+plot(xx3,im3);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波包络线'];
+title(str);
+
+
+
+
+%整体效果九宫格
+%第一列用plot(.)绘制散点图
+figure;
+subplot(3,3,1);
+plot(sam1,r1,'.');
+hold on;
+plot(sam1,im1,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N1-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+subplot(3,3,4);
+plot(sam2,r2,'.');
+hold on;
+plot(sam2,im2,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N2-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+subplot(3,3,7);
+plot(sam3,r3,'.');
+hold on;
+plot(sam3,im3,'.');
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N3-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波合成x(n) 用plot(.)绘制'];
+title(str);
+
+%第二列用stem()绘制散点图
+subplot(3,3,2);
+stem(sam1,r1);
+hold on;
+stem(sam1,im1);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N1-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+subplot(3,3,5);
+stem(sam2,r2);
+hold on;
+stem(sam2,im2);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N2-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+subplot(3,3,8);
+stem(sam3,r3);
+hold on;
+stem(sam3,im3);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,2*N3-1]);
+xlabel('n');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波合成x(n) 用stem()绘制'];
+title(str);
+
+%第三列绘制包络线
+subplot(3,3,3);
+plot(xx1,r1);
+hold on;
+plot(xx1,im1);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts1),'，60次谐波包络线'];
+title(str);
+subplot(3,3,6);
+plot(xx2,r2);
+hold on;
+plot(xx2,im2);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts2),'，60次谐波包络线'];
+title(str);
+subplot(3,3,9);
+plot(xx3,r3);
+hold on;
+plot(xx3,im3);
+legend('实部','虚部');
+ylim([-1.5,1.5]);
+xlim([0,8]);
+xlabel('t/s');
+ylabel('x(n)');
+str=['2. 取样间隔',num2str(Ts3),'，60次谐波包络线'];
+title(str);

@@ -1,0 +1,27 @@
+clear;
+clc;
+%3
+figure;     %创建图层
+x=0:0.001:8;
+f=sawtooth(pi*x/2);  %锯齿波信号
+plot(x,f);
+ylim([-1.5,1.5]);
+xlim([0,8]);  %画出原锯齿波信号
+hn=7;
+N=8000;
+Ts=4/(N-1);
+b=zeros(1,N);        %锯齿波奇函数
+for k=1:hn          %计算七次谐波的bn
+    for n=0:N-1
+        b(k)=b(k)+2*sawtooth(pi*n*Ts/2)*sin(pi/2*k*n*Ts)/N;
+    end
+end
+fou=0;
+for i=1:hn          %计算七次谐波叠加信号
+    fou=fou+b(i)*sin(pi/2*i*x);
+end
+hold on;
+plot(x,fou);        %绘制七次谐波叠加信号
+legend('原信号','合成信号');
+str=['3. ',num2str(hn),'次谐波合成信号与原信号对比'];
+title(str);

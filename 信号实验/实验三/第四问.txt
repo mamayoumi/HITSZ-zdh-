@@ -1,0 +1,106 @@
+clear 
+clc
+%4
+[y,Fs]=audioread('laohu.wav');%读取音频信息
+yk=fft(y);%做FFT
+o=0:Fs/length(y):Fs-Fs/length(y);
+t=1/Fs:1/Fs:length(y)/Fs;
+figure;
+subplot(4,2,1);
+plot(t,y);
+title('原信号波形图');
+xlabel('t/s');
+subplot(4,2,2);
+plot(o,abs(yk));
+xlabel('f/Hz');
+title('原信号FFT波形图');
+
+%合成信号
+fs=8000;
+T=8;
+f1=261.63;
+f2=293.66;
+f3=329.63;
+f4=349.23;
+f5=392;
+f=[f1 f2 f3 f4 f5];%所需频率数组
+a=1;
+
+y=0;%合成信号
+y1=0;%合成信号加包络
+y3=0;%合成信号加谐波
+k=0.7;
+t1=0:1/fs:0.5;
+t2=0:1/fs:1;
+so=[1 2 3 1 1 2 3 1 3 4 5 3 4 5 ];%乐谱
+lt=[0.5 0.5 0.5 0.5  0.5 0.5 0.5 0.5  0.5 0.5  1  0.5 0.5  1];%节拍持续时间
+for i=1:1:14%合成信号
+    if lt(i)==0.5
+        y=[y a*sin(2*pi*f(so(i))*t1)];
+        y1=[y1 a*sin(2*pi*f(so(i))*t1).*exp(-4*t1)];%加指数包络
+        y3=[y3 (0.5+1/16)*a*sin(2*pi*f(so(i))*t1)+0.25*a*sin(2*pi*2*f(so(i))*t1)+0.125*a*sin(2*pi*3*f(so(i))*t1)+0.0625*a*sin(2*pi*4*f(so(i))*t1)];
+    end
+    if lt(i)==1
+        y=[y a*sin(2*pi*f(so(i))*t2)];
+        y1=[y1 a*sin(2*pi*f(so(i))*t2).*exp(-4*t2)];%加指数包络
+        y3=[y3 (0.5+1/16)*a*sin(2*pi*f(so(i))*t2)+0.25*a*sin(2*pi*2*f(so(i))*t2)+0.125*a*sin(2*pi*3*f(so(i))*t2)+0.0625*a*sin(2*pi*4*f(so(i))*t2)];
+    end
+    
+    
+end
+%输出音频文件
+audiowrite("5-3.wav",y,fs);
+audiowrite("5-4.wav",y1,fs);
+audiowrite("5-5.wav",y3,fs);
+%画合成信号
+t=1/fs:1/fs:length(y)/fs;
+subplot(4,2,3);
+plot(t,y);
+xlabel('t/s');
+title('合成信号波形图');
+yk=fft(y);
+o=0:fs/length(y):fs-fs/length(y);
+subplot(4,2,4);
+plot(o,abs(yk));
+xlabel('f/Hz');
+title('合成信号FFT波形图');
+%画合成信号加入包络后的信号
+subplot(4,2,5);
+plot(t,y1);
+xlabel('t/s');
+title('合成信号加包络线波形图');
+yk=fft(y1);
+o=0:fs/length(y1):fs-fs/length(y1);
+subplot(4,2,6);
+plot(o,abs(yk));
+title('f/Hz');
+title('合成信号加包络后的FFT波形图');
+%画合成信号加入谐波后的信号
+subplot(4,2,7);
+plot(t,y3);
+xlabel('t/s');
+title('合成信号加入二，三，四次谐波后的波形图');
+yk=fft(y3);
+o=0:fs/length(y3):fs-fs/length(y3);
+subplot(4,2,8);
+plot(o,abs(yk));
+title('f/Hz');
+title('合成信号加入二，三，四次谐波后的fft波形图');
+%播放合成信号加入二，三，四次谐波后的音频
+sound(y3);
+pause(9);
+%播放合成信号加入包络线后的音频
+sound(y1);
+pause(9);
+%播放合成信号音频
+sound(y);
+
+
+
+
+
+
+
+
+ 
+

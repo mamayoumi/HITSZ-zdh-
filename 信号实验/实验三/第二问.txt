@@ -1,0 +1,260 @@
+clear;
+clc;
+%2(1)
+N=20000;
+fs=1000;
+x_1=zeros(1,15);
+x_2=zeros(1,15);        
+for i=0:1:9         %计算x1[n]
+    if i<=4
+        x_1(i+1)=i+1;
+    end
+    if i>=5
+        x_1(i+1)=10-i;
+    end
+end
+for i=0:1:11         %计算x2[n]
+    if i<=5
+        x_2(i+1)=2^i;
+    end
+    if i>=6
+        x_2(i+1)=-2^(i-6);
+    end
+end
+g=conv(x_1,x_2);        %计算两序列线性卷积
+gc=cconv(x_1,x_2,12);  %计算两序列长度为12的圆周卷积
+gc1=cconv(x_1,x_2,21);  %计算两序列长度为21圆周卷积
+
+x_1k=fft(x_1,N);
+x_2k=fft(x_2,N);    %计算两序列FFT
+x_k=x_1k.*x_2k;     %计算两序列FFT相乘
+g_k=fft(g,N);       %计算线性卷积序列FFT
+gc_k=fft(gc,N);     %计算长度为12的圆周卷积序列FFT
+gc_1k=fft(gc1,N);   %计算长度为21的圆周卷积序列FFT
+g_ifft=ifft(x_k);   %计算两序列FFT相乘后的IFFT序列
+
+figure;         %创建图层
+n=0:1:14;
+subplot(2,3,1);     %绘制x1[n]序列
+stem(n,x_1);
+title("2.(1) x1[n]");
+ylabel('x1[n]');
+xlabel('n');
+
+subplot(2,3,4);
+stem(n,x_2);
+title("2.(1) x2[n]");       %绘制x2[n]序列
+ylabel('x2[n]');
+xlabel('n');
+
+subplot(2,3,2);
+stem(0:length(g)-1,g);
+title("2.(1) x1[n]线性卷积x2[n]");       %绘制线性卷积序列
+ylabel('y[n]');
+xlabel('n');
+
+subplot(2,3,5);
+stem(0:length(gc)-1,gc);
+title("2.(1) x1[n]与x2[n]长度为12的圆周卷积");       %绘制两序列长度为12的圆周卷积
+ylabel('y1[n]');
+xlabel('n');
+
+subplot(2,3,6);
+stem(0:length(gc1)-1,gc1);
+title("2.(1) x1[n]与x2[n]长度为21的圆周卷积");       %绘制两序列长度为21的圆周卷积
+ylabel('y2[n]');
+xlabel('n');
+
+subplot(2,3,3);
+stem(0:length(g)-1,g_ifft(1:length(g)));
+title("2.(1) IFFT(FFT(x1[n]).FFT(x2[n])序列");       %绘制两序列FFT相乘后的IFFT序列
+ylabel('y3[n]');
+xlabel('n');
+
+%频谱绘制
+figure %创建画布
+
+n=0:1:14;
+subplot(3,3,1);     %绘制x1[n]序列
+stem(n,x_1);
+title("2.(1) x1[n]");
+ylabel('x1[n]');
+xlabel('n');
+
+subplot(3,3,4);
+stem(n,x_2);
+title("2.(1) x2[n]");       %绘制x2[n]序列
+ylabel('x2[n]');
+xlabel('n');
+
+subplot(3,3,2);
+o=0:2*pi/N:2*pi-2*pi/N;
+plot(o,abs(x_1k));
+title("2.(1) FFT(x1[n])幅度谱");       %绘制FFT(x1[n])幅度谱
+ylabel('|X1(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,5);
+plot(o,abs(x_2k));
+title("2.(1) FFT(x2[n])幅度谱");       %绘制FFT(x2[n])幅度谱
+ylabel('|X2(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,8);
+plot(o,abs(x_k));
+title("2.(1) FFT(x1[n]).FFT(x2[n])幅度谱");       %绘制FFT(x1[n]).FFT(x2[n])幅度谱
+ylabel('|X2(\Omega).X1(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,7);
+plot(o,abs(g_k));
+title("2.(1) FFT(x1[n]线性卷积x2[n])幅度谱");       %绘制FFT(x1[n]线性卷积x2[n])幅度谱
+ylabel('|Y(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,3);
+plot(o,abs(gc_k));
+title("2.(1) FFT(x1[n]与x2[n]长度为12的圆周卷积)幅度谱");       %绘制FFT(x1[n]与x2[n]长度为12的圆周卷积)幅度谱
+ylabel('|Y1(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,6);
+plot(o,abs(gc_1k));
+title("2.(1) FFT(x1[n]与x2[n]长度为21的圆周卷积)幅度谱");       %绘制FFT(x1[n]与x2[n]长度为21的圆周卷积)幅度谱
+ylabel('|Y2(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+%(2)
+N=20000;
+x_3=zeros(1,15);
+x_4=zeros(1,15);        
+for i=0:1:11        %计算x3[n]
+    if i<=6
+        x_3(i+1)=0.8^i;
+    end
+    if i>=7
+        x_3(i+1)=i-3;
+    end
+end
+for i=0:1:12            %计算x4[n]
+    if i<=4
+        x_4(i+1)=i-1;
+    end
+    if i>=5
+        x_4(i+1)=-0.6^(i-6);
+    end
+end
+g=conv(x_3,x_4);        %计算两序列线性卷积
+gc=cconv(x_3,x_4,15);  %计算两序列长度为15的圆周卷积
+gc1=cconv(x_3,x_4,24);  %计算两序列长度为24圆周卷积
+
+x_3k=fft(x_3,N);
+x_4k=fft(x_4,N);    %计算两序列FFT
+x_k=x_3k.*x_4k;     %计算两序列FFT相乘
+g_k=fft(g,N);       %计算线性卷积序列FFT
+gc_k=fft(gc,N);     %计算长度为15的圆周卷积序列FFT
+gc_1k=fft(gc1,N);   %计算长度为24的圆周卷积序列FFT
+g_ifft=ifft(x_k);   %计算两序列FFT相乘后的IFFT序列
+
+figure;         %创建图层
+n=0:1:14;
+subplot(2,3,1);     %绘制x3[n]序列
+stem(n,x_3);
+title("2.(1) x3[n]");
+ylabel('x3[n]');
+xlabel('n');
+
+subplot(2,3,4);
+stem(n,x_4);
+title("2.(1) x4[n]");       %绘制x4[n]序列
+ylabel('x4[n]');
+xlabel('n');
+
+subplot(2,3,2);
+stem(0:length(g)-1,g);
+title("2.(1) x3[n]线性卷积x4[n]");       %绘制线性卷积序列
+ylabel('y[n]');
+xlabel('n');
+
+subplot(2,3,5);
+stem(0:length(gc)-1,gc);
+title("2.(1) x3[n]与x4[n]长度为15的圆周卷积");       %绘制两序列长度为15的圆周卷积
+ylabel('y1[n]');
+xlabel('n');
+
+subplot(2,3,6);
+stem(0:length(gc1)-1,gc1);
+title("2.(1) x3[n]与x4[n]长度为24的圆周卷积");       %绘制两序列长度为24的圆周卷积
+ylabel('y2[n]');
+xlabel('n');
+
+subplot(2,3,3);
+stem(0:length(g)-1,g_ifft(1:length(g)));
+title("2.(1) IFFT(FFT(x3[n]).FFT(x4[n])序列");       %绘制两序列FFT相乘后的IFFT序列
+ylabel('y3[n]');
+xlabel('n');
+
+%频谱绘制
+figure %创建画布
+
+n=0:1:14;
+subplot(3,3,1);     %绘制x3[n]序列
+stem(n,x_3);
+title("2.(1) x3[n]");
+ylabel('x3[n]');
+xlabel('n');
+
+subplot(3,3,4);
+stem(n,x_4);
+title("2.(1) x4[n]");       %绘制x4[n]序列
+ylabel('x4[n]');
+xlabel('n');
+
+subplot(3,3,2);
+o=0:2*pi/N:2*pi-2*pi/N;
+plot(o,abs(x_3k));
+title("2.(1) FFT(x3[n])幅度谱");       %绘制FFT(x3[n])幅度谱
+ylabel('|X3(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,5);
+plot(o,abs(x_4k));
+title("2.(1) FFT(x4[n])幅度谱");       %绘制FFT(x4[n])幅度谱
+ylabel('|X4(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,8);
+plot(o,abs(x_k));
+title("2.(1) FFT(x3[n]).FFT(x4[n])幅度谱");       %绘制FFT(x3[n]).FFT(x4[n])幅度谱
+ylabel('|X4(\Omega).X3(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,7);
+plot(o,abs(g_k));
+title("2.(1) FFT(x3[n]线性卷积x4[n])幅度谱");       %绘制FFT(x3[n]线性卷积x4[n])幅度谱
+ylabel('|Y(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,3);
+plot(o,abs(gc_k));
+title("2.(1) FFT(x3[n]与x4[n]长度为15的圆周卷积)幅度谱");       %绘制FFT(x3[n]与x4[n]长度为15的圆周卷积)幅度谱
+ylabel('|Y1(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);
+
+subplot(3,3,6);
+plot(o,abs(gc_1k));
+title("2.(1) FFT(x3[n]与x4[n]长度为24的圆周卷积)幅度谱");       %绘制FFT(x3[n]与x4[n]长度为24的圆周卷积)幅度谱
+ylabel('|Y2(\Omega)|');
+xlabel('\Omega/rad');
+xlim([0 2*pi]);

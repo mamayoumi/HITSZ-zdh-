@@ -1,0 +1,97 @@
+clear;
+clc;
+%1
+A=444.128;
+a=50*sqrt(2)*pi;
+w1=a; %基本参数设置
+
+f=[1000 300 200];
+N=floor(0.064.*f); %频率即采样点设置
+figure (1);%创建画布
+figure (2);%创建画布
+%计算不同采样频率对应的采样点和频谱
+for i=1:1:3
+
+x=zeros(1,N(i));
+k=1;
+for t=1/f(i):1/f(i):0.064 %u(t)在t等于0没有定义 ，从1/fs开始采样
+x(k)=A*exp(-a*t)*sin(w1*t);
+k=k+1;
+end
+n=0:1:N(i)-1;
+figure(1);
+subplot(3,3,3*i-2);
+stem(n,x); %绘图设置
+str=['1. ' num2str(f(i)) 'Hz 采样点'];
+title(str);
+xlabel('采样点n');
+ylabel('x(n)');
+
+figure(2);
+subplot(3,2,2*i-1);
+stem(n,x); %绘图设置
+str=['1. ' num2str(f(i)) 'Hz 采样点'];
+title(str);
+xlabel('采样点n');
+ylabel('x(n)');
+
+%用模拟频率做横坐标
+o=0:0.01:2*f(i);
+fou=0;
+re=0;
+im=0;
+for n=1:1:N(i)
+re=re+x(n)*cos(2*pi*o*n/f(i));
+im=im-x(n)*sin(2*pi*o*n/f(i));
+end
+fou=sqrt(re.^2+im.^2);
+figure(1);
+subplot(3,3,3*i-1);
+plot(o,fou);
+str=['1. ' num2str(f(i)) 'Hz 采样频谱(模拟频率)'];
+title(str);
+xlabel('f/Hz (模拟频率)');
+ylabel('采样序列幅度谱');
+
+%用数字角频率做横坐标
+o=0:0.01:2*pi; %计算DTFT频谱，但将数字角频率取连续的值
+fou=0;
+re=0;
+im=0;
+for n=1:1:N(i) %计算DTFT频谱的实部和虚部
+re=re+x(n)*cos(o*n);
+im=im-x(n)*sin(o*n);
+end
+fou=sqrt(re.^2+im.^2);
+
+%画由DTFT得到的频谱及绘图设置
+figure(1);
+subplot(3,3,3*i);
+plot(o,fou);
+xlabel('\Omega/rad (数字角频率0-2*pi)');
+ylabel('采样序列幅度谱|X(\Omega)|');
+str=['1. ' num2str(f(i)) 'Hz 采样频谱(数字角频率)'];
+title(str);
+xlim([0,2*pi]);
+
+%用数字角频率做横坐标
+o=0:2*pi/N(i):2*pi-2*pi/N(i); %计算DFT频谱，但将数字角频率取连续的值
+fou=0;
+re=0;
+im=0;
+for n=1:1:N(i) %计算DFT频谱的实部和虚部
+re=re+x(n)*cos(o*n);
+im=im-x(n)*sin(o*n);
+end
+fou=sqrt(re.^2+im.^2);
+
+%画由DFT得到的频谱及绘图设置
+figure(2);
+subplot(3,2,2*i);
+plot(o,fou);
+xlabel('\Omega/rad (数字角频率0-2*pi)');
+ylabel('采样序列幅度谱|X(\Omega)|');
+str=['1. ' num2str(f(i)) 'Hz 采样频谱(数字角频率)'];
+title(str);
+xlim([0,2*pi]);
+end
