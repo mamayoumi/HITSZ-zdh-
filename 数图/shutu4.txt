@@ -1,0 +1,152 @@
+#include <stdlib.h>
+
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <math.h>
+using namespace cv;
+using namespace std;
+
+//////////////////////边缘检测////////////////// 
+//边缘检测函数
+void EdgeDetector(Mat *input, Mat* output ) 
+{
+	for (int i = 1; i < (*input).rows-1; i++)
+	{
+		for (int j = 1; j < (*input).cols-1; j++)
+		{
+			int xx =
+				int(
+				-1 * (*input).at<uchar>(i - 1, j - 1)
+				- 2 * (*input).at<uchar>(i - 1, j)
+				- 1 * (*input).at<uchar>(i - 1, j - 1)
+				+ 1 * (*input).at<uchar>(i + 1, j - 1)
+				+ 2 * (*input).at<uchar>(i + 1, j)
+				+ 1 * (*input).at<uchar>(i + 1, j - 1))
+				;
+			int yy =
+				int(
+				-1 * (*input).at<uchar>(i - 1, j - 1)
+				- 2 * (*input).at<uchar>(i  , j-1)
+				- 1 * (*input).at<uchar>(i + 1, j - 1)
+				+ 1 * (*input).at<uchar>(i - 1, j + 1)
+				+ 2 * (*input).at<uchar>(i , j+1)
+				+ 1 * (*input).at<uchar>(i + 1, j + 1));
+			int s = abs(xx) + abs(yy);
+			if (s > 255)
+			{
+				(*output).at<uchar>(i, j) = 255;
+
+			}
+			if (s < 0)
+			{
+				(*output).at<uchar>(i, j) = 0;
+
+			}
+			if (s > 0 && s < 255)
+			{
+				(*output).at<uchar>(i, j) = s;
+			}
+			/*
+			int log =
+				int(
+				-1 * (*input).at<uchar>(i - 2, j)
+				- 1 * (*input).at<uchar>(i - 1, j - 1)
+				- 2 * (*input).at<uchar>(i - 1, j)
+				- 1 * (*input).at<uchar>(i - 1, j + 1)
+				- 1 * (*input).at<uchar>(i, j - 2)
+				- 2 * (*input).at<uchar>(i, j - 1)
+				+ 16 * (*input).at<uchar>(i, j)
+				- 1 * (*input).at<uchar>(i, j + 2)
+				- 2 * (*input).at<uchar>(i, j + 1)
+				- 1 * (*input).at<uchar>(i + 2, j)
+				- 1 * (*input).at<uchar>(i + 1, j - 1)
+				- 2 * (*input).at<uchar>(i + 1, j)
+				- 1 * (*input).at<uchar>(i + 1, j + 1));
+			if (log > 255)
+			{
+				(*output).at<uchar>(i, j) = 255;
+				
+			}
+			if (log <0)
+			{
+				(*output).at<uchar>(i, j) = 0;
+
+			}
+			if (log > 0 && log < 255)
+			{
+				(*output).at<uchar>(i, j) = log;
+			}
+			*/
+			
+
+		}
+	}
+
+
+}
+
+
+void houghLine(Mat *input) 
+{
+	int r = int (sqrt(   int((*input).rows) * int((*input).rows) + int((*input).cols) * int((*input).cols)));
+	int hs[360][1000] = { 0 };
+	for (int i = 0; i < (*input).rows ; i++)
+	{
+		for (int j = 0; j < (*input).cols ; j++)
+		{
+			for (int a = 0; a < 360; a++)
+			{
+				if (int((*input).at<uchar>(i, j)) > 200)
+				{
+					int rt = int(i * cos(a * 1.0 * 3.14 / 180) + j * sin(a * 1.0 * 3.14 / 180));
+					hs[a][rt] = hs[a][rt] + 1;
+				}
+			}
+		}
+	}
+	Scalar color(172, 172, 100);//划线颜色
+	for (int i = 0; i < 360; i++)
+	{
+		for (int j = 0; j < r; j++)
+		{
+			if (hs[i][j] > 50)
+			{
+				line((*input), Point(j*1.0/cos(i*1.0*3.14/180),0), Point(0,j * 1.0 / sin(i * 1.0 * 3.14 / 180) ), color, 1);
+			}
+		}
+	}
+}
+
+
+
+int main(int argc, char** argv) {
+	VideoCapture capture;
+	capture.open(0); // 0 为打开笔记本摄像头
+	if (!capture.isOpened()) {
+		printf("摄像头没有正常打开\n");
+		return 0;
+	}
+	waitKey(1000);
+	Mat frame; //当前帧图片
+	int num_image_frames = 0; //图片帧数
+	//int frame_width = capture.get(CV_CAP_PROP_FRAME_WIDTH);//图片宽
+	//int frame_height = capture.get(CV_CAP_PROP_FRAME_HEIGHT);//图片高
+	while (1) { //循环进行图像处理
+		capture.read(frame);
+		if (frame.empty()) {
+			break;
+		}
+		
+		
+		cvtColor(frame, frame, COLOR_RGB2GRAY);
+		Mat processed_image(frame.rows, frame.cols, CV_8UC1);
+		EdgeDetector(&frame, &processed_image);
+		 
+		houghLine(&processed_image);
+		imshow("Original", frame);
+		imshow("0", processed_image);
+
+		waitKey(5);
+	}
+	return 0;
+}

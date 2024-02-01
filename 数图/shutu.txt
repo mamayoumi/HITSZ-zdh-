@@ -1,0 +1,84 @@
+#include <opencv2/opencv.hpp>
+#include<opencv2/imgproc/imgproc_c.h>
+
+using namespace cv;
+using namespace std;
+
+#define frame_height 320
+#define frame_width 480
+
+void imgpre(Mat* input, Mat* output)
+{
+	resize(*input, *output, Size(frame_width, frame_height), 0, 0, INTER_LINEAR);
+	cvtColor(*output, *output, CV_BGR2GRAY);
+}
+
+Mat getHistImage(Mat hist)
+{
+	Scalar color(172, 172, 100);//划线颜色
+	Scalar Background(255, 255, 255);//背景颜色
+	int thickness = 2;//划线宽度
+	int histss[256] = { 0 };
+	/*** 第一步：下面计算不同灰度值的像素分布 ***/
+	for (int i = 0; i < hist.rows; i++)
+	{
+		for (int j = 0; j < hist.cols; j++)
+		{
+			histss[hist.at<uchar>(i, j)]++;
+		}
+	}
+	int histSize = 256*2;
+	Mat histImage(histSize, histSize, CV_8UC3, Background);//绘制背景
+	for (int h = 0; h < 256; h++) {
+		line(histImage, Point(h* thickness, histSize - 1), Point(h* thickness, histSize - 1-(int)histss[h]*histSize*30/(hist.rows*hist.cols) ), color, thickness);
+		/*** 第二步：画出像素的直方图分布 ***/
+	}
+	return histImage;
+}
+
+
+Mat junheng(Mat* input)
+{
+	int histss[256] = { 0 };
+	int sum[256] = { 0 };
+	/*** 第一步：下面计算不同灰度值的像素分布 ***/
+	for (int i = 0; i < (*input).rows; i++)
+	{
+		for (int j = 0; j < (*input).cols; j++)
+		{
+				histss[(*input).at<uchar>(i, j)] ++;
+		}
+	}
+	sum[0] = histss[0];
+	for (int k = 1; k < 256; k++)
+	{
+		sum[k] = sum[k - 1] + histss[k];
+	}
+	Mat output(frame_height, frame_width, CV_8UC1);
+	for (int i = 0; i < (*input).rows; i++)
+	{
+		for (int j = 0; j < (*input).cols; j++)
+		{
+		
+			output.at<uchar>(i, j) = 255 * sum[(*input).at<uchar>(i, j)] / ((*input).rows * (*input).cols)+0.5 ;
+		}
+	}
+	return output;
+}
+
+
+int main()
+{
+	Mat frame,img;
+	frame=imread("D:\\pic\\IMG_2004.JPG");
+	imgpre(&frame, &img);
+	imshow("1", img);
+	Mat hist = getHistImage(img);
+	imshow("2", hist);
+	Mat a = junheng(&img);
+	imshow("3", a);
+	Mat hist1 = getHistImage(a);
+	imshow("4", hist1);
+	waitKey(0);
+	return 0;
+}
